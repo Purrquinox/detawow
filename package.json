@@ -1,0 +1,35 @@
+{
+  "name": "detawow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^0.13.0",
+    "@discordjs/rest": "^0.4.1",
+    "@discordjs/voice": "^0.9.0",
+    "axios": "^0.27.2",
+    "colors": "^1.4.0",
+    "crypto": "^1.0.1",
+    "discord-api-types": "^0.31.2",
+    "discord-modals": "^1.3.5",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.1",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "markov": "^0.0.7",
+    "metadata-scraper": "^0.2.54",
+    "mongoose": "^6.3.5",
+    "node-notifier": "^10.0.1",
+    "open-eval": "^1.0.0",
+    "pouchdb": "^7.3.0",
+    "urban-dictionary": "^3.0.2",
+    "util": "^0.12.4"
+  }
+}
