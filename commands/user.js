@@ -56,6 +56,7 @@ module.exports = {
         .setColor("RANDOM")
         .addField("Username", String(data.discordData.username), false)
         .addField("Discriminator", String(data.discordData.discriminator), false)
+        .addField("User Bio", String(data.otherData.bio), false)
         .addField("User ID", String(data.discordData.id), false)
         .addField("Created At", String(`<t:${data.discordData.created_at}>`), false)
         .addField("DetaWow Badges", String(badgeString), false)
