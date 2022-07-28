@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const schema = new Schema({
-    language: String,
+	language: String,
 	input: String,
 	output: String,
-	version: String
+	version: String,
 });
 
-module.exports = mongoose.model('EvalPublic', schema);
+module.exports = mongoose.model("EvalPublic", schema);

@@ -1,103 +1,103 @@
 module.exports = (client) => {
-    client.sendMessage = (channel, message) => {
-        const channelObj = client.channels.cache.get(channel);
+	client.sendMessage = (channel, message) => {
+		const channelObj = client.channels.cache.get(channel);
 
-        if (channelObj) {
-            channelObj.send(message);
-            return true;
-        } else return false;
-    };
+		if (channelObj) {
+			channelObj.send(message);
+			return true;
+		} else return false;
+	};
 
-    client.getChannel = (id) => {
-        return client.channels.cache.get(id);
-    };
+	client.getChannel = (id) => {
+		return client.channels.cache.get(id);
+	};
 
-    client.getUser = async (id) => {
-        let data = client.users.cache.get(id);
+	client.getUser = async (id) => {
+		let data = client.users.cache.get(id);
 
-        if (!data) return undefined;
-        else {
-            // Variables
-            let userCreationDate = new Date(data.createdAt)
-            let currentDate = Date.now();
-            let user = await client.database.users.get(id);
-            let trusted;
-            let ratelimit;
-            let bio;
+		if (!data) return undefined;
+		else {
+			// Variables
+			let userCreationDate = new Date(data.createdAt);
+			let currentDate = Date.now();
+			let user = await client.database.users.get(id);
+			let trusted;
+			let ratelimit;
+			let bio;
 
-            const getDays = (start, end) => {
-                const date1 = new Date(start);
-                const date2 = new Date(end);
-                const oneDay = 1000 * 60 * 60 * 24;
-                const diffInTime = date2.getTime() - date1.getTime();
-                const diffInDays = Math.round(diffInTime / oneDay);
-                
-                return diffInDays;
-            };
+			const getDays = (start, end) => {
+				const date1 = new Date(start);
+				const date2 = new Date(end);
+				const oneDay = 1000 * 60 * 60 * 24;
+				const diffInTime = date2.getTime() - date1.getTime();
+				const diffInDays = Math.round(diffInTime / oneDay);
 
-            if (getDays(userCreationDate, currentDate) < 365) trusted = false;
-            else trusted = true;
+				return diffInDays;
+			};
 
-            if (user != null || user != undefined) {
-                ratelimit = user.ratelimit;
-                badges = user.badges;
-                bio = user.bio || "This user hasn't added a bio yet!";
-            } else {
-                if (trusted === true) {
-                    ratelimit = 5;
-                    badges = [];
-                    bio = "This user hasn't added a bio yet!";
-                } else {
-                    ratelimit = 20;
-                    badges = [];
-                    bio = "This user hasn't added a bio yet!";
-                }
-            }
-            
-            data["created_at"] = Math.round((new Date(data.createdAt)).getTime() / 1000);
-            data["avatar_url"] = data.displayAvatarURL();
+			if (getDays(userCreationDate, currentDate) < 365) trusted = false;
+			else trusted = true;
 
-            return {
-                discordData: data,
-                otherData: {
-                    trusted: trusted,
-                    ratelimit: ratelimit,
-                    badges: badges,
-                    bio: bio
-                }
-            };
-        }
-    }
+			if (user != null || user != undefined) {
+				ratelimit = user.ratelimit;
+				badges = user.badges;
+				bio = user.bio || "This user hasn't added a bio yet!";
+			} else {
+				if (trusted === true) {
+					ratelimit = 5;
+					badges = [];
+					bio = "This user hasn't added a bio yet!";
+				} else {
+					ratelimit = 20;
+					badges = [];
+					bio = "This user hasn't added a bio yet!";
+				}
+			}
 
-    client.getGuild = (id) => {
-        return client.guilds.cache.get(id);
-    };
+			data["created_at"] = Math.round(
+				new Date(data.createdAt).getTime() / 1000
+			);
+			data["avatar_url"] = data.displayAvatarURL();
 
-    client.getMessage = (channel, message) => {
-        const channelObj = client.channels.cache.get(channel);
-        const messageObj = channelObj.messages.cache.get(message);
+			return {
+				discordData: data,
+				otherData: {
+					trusted: trusted,
+					ratelimit: ratelimit,
+					badges: badges,
+					bio: bio,
+				},
+			};
+		}
+	};
 
-        return messageObj;
-    }
+	client.getGuild = (id) => {
+		return client.guilds.cache.get(id);
+	};
 
-    client.listGuilds = () => {
-        return client.guilds.cache.map(guild => guild.name);
-    };
+	client.getMessage = (channel, message) => {
+		const channelObj = client.channels.cache.get(channel);
+		const messageObj = channelObj.messages.cache.get(message);
 
-    client.setRPC = (msg, type) => {
-        client.user.setActivity(msg, {
-            type: type.toUpperCase()
-        });
+		return messageObj;
+	};
 
-        return {
-            "status": msg,
-            "type": type.toUpperCase()
-        };
-    };
+	client.listGuilds = () => {
+		return client.guilds.cache.map((guild) => guild.name);
+	};
 
-    client.admins = [
-        "564164277251080208"
-    ];
+	client.setRPC = (msg, type) => {
+		client.user.setActivity(msg, {
+			type: type.toUpperCase(),
+		});
 
-    client.bannedUsers = [];
+		return {
+			status: msg,
+			type: type.toUpperCase(),
+		};
+	};
+
+	client.admins = ["564164277251080208"];
+
+	client.bannedUsers = [];
 };

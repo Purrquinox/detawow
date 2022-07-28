@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const schema = new Schema({
-    allowedChannels: Array
+	allowedChannels: Array,
 });
 
-module.exports = mongoose.model('allowedChannels', schema);
+module.exports = mongoose.model("allowedChannels", schema);

@@ -1,18 +1,11 @@
-const {
-    SlashCommandBuilder
-} = require('@discordjs/builders');
-const {
-    Modal,
-    TextInputComponent,
-    showModal
-} = require('discord-modals');
+const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('bash')
-        .setDescription('Run bash commands inside of a container!'),
-    async execute(client, interaction, MessageEmbed, Formatters, db) {
-        let modal;
+	data: new SlashCommandBuilder()
+		.setName("bash")
+		.setDescription("Run bash commands inside of a container!"),
+	async execute(client, interaction, MessageEmbed, Formatters, db) {
+		/*let modal;
         const admins = client.admins;
         
         if (admins.includes(interaction.user.id)) {
@@ -74,6 +67,8 @@ module.exports = {
         showModal(modal, {
             client: client,
             interaction: interaction
-        });
-    },
+        });*/
+
+		message.reply("This command has been temporaily disabled!");
+	},
 };
