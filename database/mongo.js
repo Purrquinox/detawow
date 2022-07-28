@@ -115,7 +115,7 @@ const users = {
             user_id: user_id,
             badges: [],
             ratelimit: ratelimit,
-            bio: ""
+            bio: null
         });
 
         doc.save().then(() => {
