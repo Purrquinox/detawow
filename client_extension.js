@@ -23,7 +23,8 @@ module.exports = (client) => {
             let user = await client.database.users.get(id);
             let trusted;
             let ratelimit;
-    
+            let bio;
+
             const getDays = (start, end) => {
                 const date1 = new Date(start);
                 const date2 = new Date(end);
@@ -40,13 +41,16 @@ module.exports = (client) => {
             if (user != null || user != undefined) {
                 ratelimit = user.ratelimit;
                 badges = user.badges;
+                bio = user.bio || "This user hasn't added a bio yet!";
             } else {
                 if (trusted === true) {
                     ratelimit = 5;
                     badges = [];
+                    bio = "This user hasn't added a bio yet!";
                 } else {
                     ratelimit = 20;
                     badges = [];
+                    bio = "This user hasn't added a bio yet!";
                 }
             }
             
@@ -58,7 +62,8 @@ module.exports = (client) => {
                 otherData: {
                     trusted: trusted,
                     ratelimit: ratelimit,
-                    badges: badges
+                    badges: badges,
+                    bio: bio
                 }
             };
         }
