@@ -76,7 +76,7 @@ const allowed_channels = {
 
     async add(id) {
         const data = await allowedChannelsSchema.find({});
-        let oldChannels = data[0].allowedChannelsSchema;
+        let oldChannels = data[0].allowedChannels;
         let newChannels = [];
 
         oldChannels.forEach(channel => {
@@ -114,7 +114,8 @@ const users = {
         const doc = new usersSchema({
             user_id: user_id,
             badges: [],
-            ratelimit: ratelimit
+            ratelimit: ratelimit,
+            bio: ""
         });
 
         doc.save().then(() => {
