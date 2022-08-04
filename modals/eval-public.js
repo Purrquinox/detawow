@@ -6,78 +6,74 @@ module.exports = {
 	data: {
 		name: "eval-public",
 	},
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		let language =
-			interaction.getTextInputValue("language") || "javascript";
-		const code = interaction.getTextInputValue("code");
-		let inline = interaction.getTextInputValue("inline") || "n";
-		let hidden = interaction.getTextInputValue("hidden") || "n";
+			interaction.fields.getTextInputValue("language") || "javascript";
+		const code = interaction.fields.getTextInputValue("code");
+		let inline = interaction.fields.getTextInputValue("inline") || "n";
+		let hidden = interaction.fields.getTextInputValue("hidden") || "n";
 		let embed;
 
-		if (language.toLowerCase() === "nodejs") {
-			language = "javascript";
-		}
+		if (language.toLowerCase() === "nodejs") language = "javascript";
 
-		if (inline.toLowerCase() === "y") {
-			inline = true;
-		} else {
-			inline = false;
-		}
+		if (inline.toLowerCase() === "y") inline = true;
+		else inline = false;
 
 		const bannedLangs = [];
 
-		function limit(value) {
+		const limit = (value) => {
 			let max_chars = 700;
 			let i;
 
-			if (value.length > max_chars) {
-				i = value.substr(0, max_chars);
-			} else {
-				i = value;
-			}
+			if (value.length > max_chars) i = value.substr(0, max_chars);
+			else i = value;
 
 			return i;
-		}
+		};
 
 		if (bannedLangs.includes(language)) {
-			embed = new MessageEmbed()
+			embed = new EmbedBuilder()
 				.setTitle("Evaluation Results")
-				.setColor("RANDOM")
+				.setColor(0xff0000)
 				.setDescription(
-					"This language was banned by the creator of this bot!"
+					"This language is not supported at this time. Please try again later."
 				);
 		} else {
 			let results = await ev
 				.eval(language, code)
 				.then(async (results) => {
-					embed = new MessageEmbed()
+					embed = new EmbedBuilder()
 						.setTitle("Evaluation Results")
-						.setColor("RANDOM")
-						.addField(
-							"Language:",
-							results.language || "No language detected!",
-							inline
-						)
-						.addField(
-							"Input:",
-							Formatters.codeBlock(
-								results.language || language,
-								limit(code)
-							),
-							inline
-						)
-						.addField(
-							"Output:",
-							Formatters.codeBlock(
-								language,
-								limit(results.output || results.message)
-							),
-							inline
-						)
-						.addField(
-							"Version:",
-							results.version || "No version detected!",
-							inline
+						.setColor(0x00ff00)
+						.addFields(
+							{
+								name: "Language:",
+								value:
+									results.language || "No language detected!",
+								inline,
+							},
+							{
+								name: "Input:",
+								value: Formatters.codeBlock(
+									results.language || language,
+									limit(code)
+								),
+								inline,
+							},
+							{
+								name: "Output:",
+								value: Formatters.codeBlock(
+									results.language || language,
+									limit(results.output || results.message)
+								),
+								inline,
+							},
+							{
+								name: "Version:",
+								value:
+									results.version || "No version detected!",
+								inline,
+							}
 						)
 						.setFooter({
 							iconURL: interaction.user.displayAvatarURL(),
@@ -96,18 +92,26 @@ module.exports = {
 					});
 				})
 				.catch(async (error) => {
-					embed = new MessageEmbed()
+					embed = new EmbedBuilder()
 						.setTitle("Evaluation Results")
-						.setColor("#FF0000")
-						.addField(
-							"Input:",
-							Formatters.codeBlock(language, limit(code)),
-							inline
-						)
-						.addField(
-							"Output:",
-							Formatters.codeBlock(language, limit(error)),
-							inline
+						.setColor(0xff0000)
+						.addFields(
+							{
+								name: "Input:",
+								value: Formatters.codeBlock(
+									language,
+									limit(code)
+								),
+								inline,
+							},
+							{
+								name: "Output:",
+								value: Formatters.codeBlock(
+									language,
+									limit(error)
+								),
+								inline,
+							}
 						)
 						.setFooter({
 							iconURL: interaction.user.displayAvatarURL(),
@@ -135,12 +139,14 @@ module.exports = {
 					label: "Save as File",
 					style: 1,
 					custom_id: "saveasfile-public",
+					disabled: true,
 				},
 				{
 					type: 2,
 					label: "Copy Code",
 					style: 3,
 					custom_id: "copy-public",
+					disabled: true,
 				},
 			],
 		};

@@ -2,7 +2,7 @@ module.exports = {
 	data: {
 		name: "saveasfile-admin",
 	},
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		const data = await db.eval_private.get();
 		const code = data.input;
 		const results = data.output;

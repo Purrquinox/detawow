@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("bruh")
 		.setDescription("i hate my life..."),
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		await interaction.reply({
 			content: client.user.displayAvatarURL(),
 			components: [

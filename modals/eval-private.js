@@ -4,30 +4,24 @@ module.exports = {
 	data: {
 		name: "eval-private",
 	},
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
-		const code = interaction.getTextInputValue("code");
-		let inline = interaction.getTextInputValue("inline") || "n";
-		let hidden = interaction.getTextInputValue("hidden") || "n";
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
+		const code = interaction.fields.getTextInputValue("code");
+		let inline = interaction.fields.getTextInputValue("inline") || "n";
+		let hidden = interaction.fields.getTextInputValue("hidden") || "n";
 		let embed;
 
-		if (inline.toLowerCase() === "y") {
-			inline = true;
-		} else {
-			inline = false;
-		}
+		if (inline.toLowerCase() === "y") inline = true;
+		else inline = false;
 
-		function limit(value) {
+		const limit = (value) => {
 			let max_chars = 700;
 			let i;
 
-			if (value.length > max_chars) {
-				i = value.substr(0, max_chars);
-			} else {
-				i = value;
-			}
+			if (value.length > max_chars) i = value.substr(0, max_chars);
+			else i = value;
 
 			return i;
-		}
+		};
 
 		const clean = async (text) => {
 			if (text && text.constructor.name == "Promise") text = await text;
@@ -65,28 +59,33 @@ module.exports = {
 				return data.reverse().join(" -> ");
 			};
 
-			embed = new MessageEmbed()
+			embed = new EmbedBuilder()
 				.setTitle("Evaluation Results")
-				.setColor("RANDOM")
-				.addField(
-					"Input:",
-					Formatters.codeBlock("javascript", limit(code)),
-					inline
-				)
-				.addField(
-					"Output:",
-					Formatters.codeBlock("javascript", limit(results)),
-					inline
-				)
-				.addField(
-					"Type:",
-					Formatters.codeBlock("javascript", typeOf),
-					inline
-				)
-				.addField(
-					"Prototype:",
-					Formatters.codeBlock("javascript", tree(evaled)),
-					inline
+				.setColor(0x00ff00)
+				.addFields(
+					{
+						name: "Input:",
+						value: Formatters.codeBlock("javascript", limit(code)),
+						inline: inline,
+					},
+					{
+						name: "Output:",
+						value: Formatters.codeBlock(
+							"javascript",
+							limit(results)
+						),
+						inline: inline,
+					},
+					{
+						name: "Type:",
+						value: Formatters.codeBlock("javascript", typeOf),
+						inline: inline,
+					},
+					{
+						name: "Prototype:",
+						value: Formatters.codeBlock("javascript", tree(evaled)),
+						inline: inline,
+					}
 				)
 				.setFooter({
 					iconURL: interaction.user.displayAvatarURL(),
@@ -104,23 +103,25 @@ module.exports = {
 				modal: tree(evaled),
 			});
 		} catch (err) {
-			embed = new MessageEmbed()
+			embed = new EmbedBuilder()
 				.setTitle("Evaluation Results")
-				.setColor("#FF0000")
-				.addField(
-					"Input:",
-					Formatters.codeBlock("javascript", code),
-					inline
-				)
-				.addField(
-					"Output:",
-					Formatters.codeBlock("javascript", limit(err)),
-					inline
-				)
-				.addField(
-					"Type:",
-					Formatters.codeBlock("javascript", "Error"),
-					inline
+				.setColor(0xff0000)
+				.addFields(
+					{
+						name: "Input:",
+						value: Formatters.codeBlock("javascript", limit(code)),
+						inline: inline,
+					},
+					{
+						name: "Output:",
+						value: Formatters.codeBlock("javascript", limit(err)),
+						inline: inline,
+					},
+					{
+						name: "Type:",
+						value: Formatters.codeBlock("javascript", "Error"),
+						inline: inline,
+					}
 				)
 				.setFooter({
 					iconURL: interaction.user.displayAvatarURL(),

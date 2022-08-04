@@ -6,7 +6,7 @@ require("dotenv").config();
 // Schemas
 const evalPublicSchema = require("./schemas/eval_public.js");
 const evalPrivateSchema = require("./schemas/eval_private.js");
-const allowedChannelsSchema = require("./schemas/allowedChannels.js");
+const aiChannelsSchema = require("./schemas/aiChannels.js");
 const usersSchema = require("./schemas/users.js");
 
 // MongoDB Connection Options
@@ -68,45 +68,29 @@ const eval_private = {
 	},
 };
 
-const allowed_channels = {
-	async get() {
-		const data = await allowedChannelsSchema.find({});
-		return data[0];
-	},
-
-	async add(id) {
-		const data = await allowedChannelsSchema.find({});
-		let oldChannels = data[0].allowedChannels;
-		let newChannels = [];
-
-		oldChannels.forEach((channel) => {
-			newChannels.push(channel);
+const aiChannels = {
+	async get(channel_id) {
+		const data = await aiChannelsSchema.findOne({
+			channel_id: channel_id
 		});
 
-		newChannels.push(id);
+		return data;
+	},
 
-		let returned;
+	async add(channel_id, guild_id, category) {
+		const doc = new aiChannelsSchema({
+			channel_id: channel_id,
+			guild_id: guild_id,
+			category: category
+		});
 
-		setTimeout(() => {
-			allowedChannelsSchema.replaceOne(
-				data,
-				{ allowedChannels: newChannels },
-				null,
-				(err, doc) => {
-					if (err) {
-						logger.error(
-							"400",
-							`MongoDB Document Replace Error`,
-							err
-						);
-					} else {
-						returned = doc;
-					}
-				}
-			);
-		}, 3000);
-
-		return returned;
+		doc.save()
+			.then(() => {
+				logger.info("200", "MongoDB Document Created", {});
+			})
+			.catch((err) => {
+				logger.error("400", `MongoDB Document Create Error`, err);
+			});
 	},
 };
 
@@ -162,6 +146,6 @@ const users = {
 module.exports = {
 	eval_public,
 	eval_private,
-	allowed_channels,
+	aiChannels,
 	users,
 };

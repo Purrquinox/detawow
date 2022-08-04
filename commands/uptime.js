@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("uptime")
 		.setDescription("How long have i been alive for?"),
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		const formatTime = (seconds) => {
 			const days = Math.floor(seconds / 86400);
 			seconds -= days * 86400;

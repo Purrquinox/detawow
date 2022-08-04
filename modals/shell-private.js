@@ -5,30 +5,24 @@ module.exports = {
 	data: {
 		name: "shell-private",
 	},
-	async execute(client, interaction, MessageEmbed, Formatters) {
-		const command = interaction.getTextInputValue("command");
-		let inline = interaction.getTextInputValue("inline") || "n";
-		let hidden = interaction.getTextInputValue("hidden") || "n";
+	async execute(client, interaction, EmbedBuilder, Formatters) {
+		const command = interaction.fields.getTextInputValue("command");
+		let inline = interaction.fields.getTextInputValue("inline") || "n";
+		let hidden = interaction.fields.getTextInputValue("hidden") || "n";
 		let embed;
 
-		if (inline.toLowerCase() === "y") {
-			inline = true;
-		} else {
-			inline = false;
-		}
+		if (inline.toLowerCase() === "y") inline = true;
+		else inline = false;
 
-		function limit(value) {
+		const limit = (value) => {
 			let max_chars = 700;
 			let i;
 
-			if (value.length > max_chars) {
-				i = value.substr(0, max_chars);
-			} else {
-				i = value;
-			}
+			if (value.length > max_chars) i = value.substr(0, max_chars);
+			else i = value;
 
 			return i;
-		}
+		};
 
 		const clean = async (text) => {
 			if (text && text.constructor.name == "Promise") text = await text;
@@ -50,18 +44,23 @@ module.exports = {
 				const results = await clean(stdout);
 
 				if (err) {
-					embed = new MessageEmbed()
+					embed = new EmbedBuilder()
 						.setTitle("Bash Results")
-						.setColor("#FF0000")
-						.addField(
-							"Input:",
-							Formatters.codeBlock("bash", command),
-							inline
-						)
-						.addField(
-							"Output:",
-							Formatters.codeBlock("bash", limit(err)),
-							inline
+						.setColor(0xff0000)
+						.addFields(
+							{
+								name: "Input:",
+								value: Formatters.codeBlock(
+									"bash",
+									limit(command)
+								),
+								inline: inline,
+							},
+							{
+								name: "Output:",
+								value: Formatters.codeBlock("bash", limit(err)),
+								inline: inline,
+							}
 						)
 						.setFooter({
 							iconURL: interaction.user.displayAvatarURL(),
@@ -86,18 +85,26 @@ module.exports = {
 						});
 					}
 				} else {
-					embed = new MessageEmbed()
+					embed = new EmbedBuilder()
 						.setTitle("Bash Results")
-						.setColor("#FF0000")
-						.addField(
-							"Input:",
-							Formatters.codeBlock("bash", command),
-							inline
-						)
-						.addField(
-							"Results:",
-							Formatters.codeBlock("bash", limit(results)),
-							inline
+						.setColor(0x00ff00)
+						.addFields(
+							{
+								name: "Input:",
+								value: Formatters.codeBlock(
+									"bash",
+									limit(command)
+								),
+								inline: inline,
+							},
+							{
+								name: "Results:",
+								value: Formatters.codeBlock(
+									"bash",
+									limit(results)
+								),
+								inline: inline,
+							}
 						)
 						.setFooter({
 							iconURL: interaction.user.displayAvatarURL(),
@@ -124,18 +131,20 @@ module.exports = {
 				}
 			});
 		} catch (err) {
-			embed = new MessageEmbed()
+			embed = new EmbedBuilder()
 				.setTitle("Bash Results")
-				.setColor("#FF0000")
-				.addField(
-					"Input:",
-					Formatters.codeBlock("bash", command),
-					inline
-				)
-				.addField(
-					"Output:",
-					Formatters.codeBlock("bash", limit(err)),
-					inline
+				.setColor(0xff0000)
+				.addFields(
+					{
+						name: "Input:",
+						value: Formatters.codeBlock("bash", limit(command)),
+						inline: inline,
+					},
+					{
+						name: "Output:",
+						value: Formatters.codeBlock("bash", limit(err)),
+						inline: inline,
+					}
 				)
 				.setFooter({
 					iconURL: interaction.user.displayAvatarURL(),

@@ -6,51 +6,54 @@ module.exports = {
 	data: {
 		name: "shell-public",
 	},
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
-		const command = interaction.getTextInputValue("command");
-		let inline = interaction.getTextInputValue("inline") || "n";
-		let hidden = interaction.getTextInputValue("hidden") || "n";
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
+		const command = interaction.fields.getTextInputValue("command");
+		let inline = interaction.fields.getTextInputValue("inline") || "n";
+		let hidden = interaction.fields.getTextInputValue("hidden") || "n";
 		let embed;
 
-		if (inline.toLowerCase() === "y") {
-			inline = true;
-		} else {
-			inline = false;
-		}
+		if (inline.toLowerCase() === "y") inline = true;
+		else inline = false;
 
-		function limit(value) {
+		const limit = (value) => {
 			let max_chars = 700;
 			let i;
 
-			if (value.length > max_chars) {
-				i = value.substr(0, max_chars);
-			} else {
-				i = value;
-			}
+			if (value.length > max_chars) i = value.substr(0, max_chars);
+			else i = value;
 
 			return i;
-		}
+		};
 
 		let results = await ev
 			.eval("bash", command)
 			.then(async (results) => {
-				embed = new MessageEmbed()
+				embed = new EmbedBuilder()
 					.setTitle("Bash Results")
-					.setColor("RANDOM")
-					.addField(
-						"Input:",
-						Formatters.codeBlock("bash", command),
-						inline
+					.setColor(0x00ff00)
+					.addFields(
+						{
+							name: "Input:",
+							value: Formatters.codeBlock("bash", limit(command)),
+							inline: inline,
+						},
+						{
+							name: "Output:",
+							value: Formatters.codeBlock(
+								"bash",
+								limit(results.output || results.message)
+							),
+							inline: inline,
+						},
+						{
+							name: "Version:",
+							value: Formatters.codeBlock(
+								"bash",
+								limit(results.version)
+							),
+							inline: inline,
+						}
 					)
-					.addField(
-						"Output:",
-						Formatters.codeBlock(
-							"bash",
-							limit(results.output || results.message)
-						),
-						inline
-					)
-					.addField("Version:", results.version, inline)
 					.setFooter({
 						iconURL: interaction.user.displayAvatarURL(),
 						text: `Executed by ${
@@ -61,18 +64,20 @@ module.exports = {
 					});
 			})
 			.catch(async (error) => {
-				embed = new MessageEmbed()
+				embed = new EmbedBuilder()
 					.setTitle("Bash Results")
-					.setColor("#FF0000")
-					.addField(
-						"Input:",
-						Formatters.codeBlock("bash", limit(command)),
-						inline
-					)
-					.addField(
-						"Output:",
-						Formatters.codeBlock("bash", limit(error)),
-						inline
+					.setColor(0xff0000)
+					.addFields(
+						{
+							name: "Input:",
+							value: Formatters.codeBlock("bash", limit(command)),
+							inline: inline,
+						},
+						{
+							name: "Output:",
+							value: Formatters.codeBlock("bash", limit(error)),
+							inline: inline,
+						}
 					)
 					.setFooter({
 						iconURL: interaction.user.displayAvatarURL(),

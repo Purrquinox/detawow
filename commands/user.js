@@ -12,19 +12,13 @@ module.exports = {
 				)
 				.setRequired(true)
 		),
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		// Get the user
 		const user = interaction.options.getUser("user");
 		const data = await client.getUser(user.id);
 
 		// Check if the user exists
-		if (!data) {
-			interaction.reply({
-				content: "I couldn't find that user.",
-			});
-
-			return;
-		}
+		if (!data) return interaction.reply("I couldn't find that user.");
 
 		// Badges
 		const badges = data.otherData.badges;
@@ -32,7 +26,7 @@ module.exports = {
 
 		if (badges.length > 0) {
 			for (let i = 0; i < badges.length; i++) {
-				badgeString += `${badges[i]}\n`;
+				badgeString += `- ${badges[i]}\n`;
 			}
 		} else {
 			badgeString = "No badges";
@@ -49,32 +43,54 @@ module.exports = {
 		}
 
 		// Create embed
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setTitle(
 				`${data.discordData.username}#${data.discordData.discriminator}`
 			)
 			.setThumbnail(data.discordData.avatar_url)
-			.setColor("RANDOM")
-			.addField("Username", String(data.discordData.username), false)
-			.addField(
-				"Discriminator",
-				String(data.discordData.discriminator),
-				false
-			)
-			.addField("User Bio", String(data.otherData.bio), false)
-			.addField("User ID", String(data.discordData.id), false)
-			.addField(
-				"Created At",
-				String(`<t:${data.discordData.created_at}>`),
-				false
-			)
-			.addField("DetaWow Badges", String(badgeString), false)
-			.addField(
-				"DetaWow Ratelimit",
-				String(`${data.otherData.ratelimit} seconds`),
-				false
-			)
-			.addField("DetaWow Trusted", String(trustedString), false);
+			.setColor(0x00ff00)
+			.addFields(
+				{
+					name: "Username",
+					value: String(data.discordData.username),
+					inline: false,
+				},
+				{
+					name: "Discriminator",
+					value: String(data.discordData.discriminator),
+					inline: false,
+				},
+				{
+					name: "User Bio",
+					value: String(data.otherData.bio),
+					inline: false,
+				},
+				{
+					name: "User ID",
+					value: String(data.discordData.id),
+					inline: false,
+				},
+				{
+					name: "Created At",
+					value: String(`<t:${data.discordData.created_at}>`),
+					inline: false,
+				},
+				{
+					name: "DetaWow Badges",
+					value: String(badgeString),
+					inline: false,
+				},
+				{
+					name: "DetaWow Ratelimit",
+					value: String(`${data.otherData.ratelimit} seconds`),
+					inline: false,
+				},
+				{
+					name: "DetaWow Trusted",
+					value: String(trustedString),
+					inline: false,
+				}
+			);
 
 		// Send embed
 		interaction.reply({

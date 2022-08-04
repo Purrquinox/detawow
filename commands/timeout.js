@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { Permissions } = require("discord.js");
+const { PermissionsBitField } = require("discord.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,48 +25,60 @@ module.exports = {
 				.setDescription("What is the reason for you muting this user?")
 				.setRequired(false)
 		),
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		const user = interaction.options.getMember("user");
 		const minutes = interaction.options.getString("minutes");
 		const time = minutes * 60 * 1000;
 		let reason = interaction.options.getString("reason");
 		let embed;
 
-		if (reason === undefined) reason = "No reason Specified!";
+		if (reason === undefined) reason = "No Reason Specified!";
 
 		if (
 			!interaction.member.permissions.has(
-				Permissions.FLAGS.TIMEOUT_MEMBERS
+				PermissionsBitField.Flags.ModerateMembers
 			)
 		)
-			return;
+			return interaction.reply(
+				"You do not have permission to use this command!"
+			);
 
 		user.timeout(time, reason)
 			.then(async () => {
-				embed = new MessageEmbed()
+				embed = new EmbedBuilder()
 					.setTitle("User Muted!")
-					.setColor("RANDOM")
-					.addField(
-						"User:",
-						`${user.user.username}#${user.user.discriminator}`,
-						false
-					)
-					.addField("Time:", `${minutes} minutes`, false)
-					.addField("Reason:", reason, false);
+					.setColor(0x00ff00)
+					.addFields(
+						{
+							name: "User:",
+							value: `${user.user.username}#${user.user.discriminator}`,
+							inline: false,
+						},
+						{
+							name: "Time:",
+							value: `${minutes} minutes`,
+							inline: false,
+						},
+						{
+							name: "Reason:",
+							value: reason,
+							inline: false,
+						}
+					);
 
 				await interaction.reply({
 					embeds: [embed],
 				});
 			})
 			.catch(async (err) => {
-				embed = new MessageEmbed()
+				embed = new EmbedBuilder()
 					.setTitle("ERROR")
-					.setColor("RANDOM")
-					.addField(
-						"Message:",
-						"Sorry, there was an error. This issue has been reported to the developer!",
-						false
-					);
+					.setColor(0xff0000)
+					.addFields({
+						name: "Message:",
+						value: "Sorry, there was an error. This issue has been reported to the developer!",
+						inline: false,
+					});
 
 				await interaction.reply({
 					embeds: [embed],

@@ -11,7 +11,7 @@ module.exports = {
 				.setDescription("What do you want to make?")
 				.setRequired(true)
 		),
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		const query = interaction.options.getString("query");
 
 		const options = {
@@ -37,37 +37,19 @@ module.exports = {
 				if (data === undefined) return;
 
 				data.forEach(async (recipe) => {
-					let servings = recipe.num_servings;
-					let time = null;
-
-					if (servings === undefined) {
-						servings = "Unknown";
-					}
-
-					if (
-						recipe["total_time_tier"] === null ||
-						recipe["total_time_tier"] === undefined
-					) {
-						// Do Nothing
-					} else {
-						time =
-							`takes ${recipe["total_time_tier"].display_tier} to make`.toLowerCase();
-					}
-
 					desc =
 						desc +
-						`[${recipe.name}](https://tasty.co/recipe/${
-							recipe.slug
-						}) (${servings} servings - ${
-							time || "Time tier is unknown"
-						})\n`;
+						`- [${recipe.name}](https://tasty.co/recipe/${recipe.slug})\n`;
 				});
 
-				let embed = new MessageEmbed()
+				let embed = new EmbedBuilder()
 					.setTitle(`Here are some recipes for ${query}`)
-					.setColor("RANDOM")
-					.setDescription(desc)
-					.setFooter("Powered by Tasty");
+					.setColor(0x00ff00)
+					.setDescription(desc || `No recipes found for ${query}`)
+					.setFooter({
+						iconURL: interaction.user.displayAvatarURL(),
+						text: `Requested by ${interaction.user.username} | Powered by Tasty!`,
+					});
 
 				await interaction
 					.reply({
@@ -82,14 +64,14 @@ module.exports = {
 			.catch(async (error) => {
 				console.error(error);
 
-				let embed = new MessageEmbed()
+				let embed = new EmbedBuilder()
 					.setTitle("brain damage")
-					.setColor("RANDOM")
-					.addField(
-						"Message",
-						Formatters.codeBlock("javascript", error),
-						false
-					);
+					.setColor(0xff0000)
+					.addFields({
+						name: "Message",
+						value: Formatters.codeBlock("javascript", error),
+						inline: false,
+					});
 
 				await interaction.reply({
 					embeds: [embed],

@@ -2,7 +2,7 @@ module.exports = {
 	data: {
 		name: "copy-admin",
 	},
-	async execute(client, interaction, MessageEmbed, Formatters, db) {
+	async execute(client, interaction, EmbedBuilder, Formatters, db) {
 		const data = await db.eval_private.get();
 		const code = data.input;
 
@@ -14,11 +14,8 @@ module.exports = {
 			let max_chars = 700;
 			let i;
 
-			if (value.length > max_chars) {
-				i = value.substr(0, max_chars);
-			} else {
-				i = value;
-			}
+			if (value.length > max_chars) i = value.substr(0, max_chars);
+			else i = value;
 
 			return i;
 		};
