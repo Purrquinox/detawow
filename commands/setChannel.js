@@ -18,9 +18,7 @@ module.exports = {
 				.setRequired(true)
 				.addChoices(
 					{ name: "Failure", value: "failure" },
-					{ name: "Brain Damage (Default)", value: "brain_damage" },
-					{ name: "Cupid (NSFW)", value: "cupid_nsfw" },
-					{ name: "Sexting (NSFW)", value: "sexting_nsfw" }
+					{ name: "Brain Damage (Default)", value: "brain_damage" }
 				)
 		),
 	async execute(client, interaction, EmbedBuilder, Formatters, db) {
